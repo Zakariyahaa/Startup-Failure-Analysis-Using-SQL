@@ -19,7 +19,9 @@
 
 This analysis examines patterns and causes of startup failures across various sectors from 1992 to 2024. By analyzing 914 failed startups, we identify common failure factors, sector-specific vulnerabilities, and relationships between funding, operational duration, and failure causes. The insights can help entrepreneurs, investors, and policymakers understand startup failure dynamics and make more informed decisions.
 
-![startup counts](https://github.com/user-attachments/assets/5840e972-f9c1-4f77-b597-a9a4d579ef77)
+  ![startup counts](https://github.com/user-attachments/assets/05238066-a04f-4dc3-82fb-96ac88b84b5d)
+
+  ![count by startyear](https://github.com/user-attachments/assets/d8532863-caea-4d5d-ae2c-e5ccd7a3eb09)
 
 ---
 
@@ -86,7 +88,9 @@ Initial exploration covered:
 * Funding and budget status distribution
 * Number of years operated before failure
 * Most cited failure reasons
-  
+
+  ![failure per year](https://github.com/user-attachments/assets/4b60d701-a7d9-4d6a-bfdb-88ed249dd00e)
+
 * **Sector Distribution**:
   * Total of 914 failed startups analyzed
   * Information sector accounted for 42% of failures (highest among all sectors)
