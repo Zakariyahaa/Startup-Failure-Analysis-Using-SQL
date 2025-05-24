@@ -226,6 +226,7 @@ FROM allsectors;
   * **Information** sector: **42%** of failures
   * **Retail**, **Manufacturing**, **Food & Accommodation** follow.
 
+![failure count by years_operated](https://github.com/user-attachments/assets/38c27499-5f61-4ea9-ae80-affa145f4d38)
 
 ### 📉 Correlation Insights
 
