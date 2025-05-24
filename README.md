@@ -38,7 +38,7 @@ This analysis examines patterns and causes of startup failures across various se
 
 * **Database**: PostgreSQL for data processing and analysis
 * **Languages**: SQL for data cleaning, transformation, and analysis
-* **Platform**: Kaggle
+* **Platform**: Kaggle for data sourcing
 * **Documentation**: GitHub for version control and project documentation
 
 ---
@@ -52,14 +52,90 @@ Key preprocessing steps executed through SQL:
 * **Date extraction**:
   * Extracted `start_year` (4-digit year before hyphen) and `end_year` (4-digit year after hyphen) from textual `years_of_operation`.
   * Calculated `years_operated` using a COALESCE fallback for missing or malformed values.
+```sql
+---Extracting start_year, end_year and years_operated---
+---start_year: 4-digit year before -, whether inside parentheses or not
+---end_year: 4-digit year after -, same
+---years_operated: Numeric value before the space (' ') if present; otherwise, calculate as end_year - start_year
+
+SELECT 
+    years_of_operation,
+    CAST(substring(years_of_operation FROM '(\d{4})\s*-\s*\d{4}') 
+        AS INTEGER) AS start_year,
+    CAST(substring(years_of_operation FROM '\d{4}\s*-\s*(\d{4})') 
+        AS INTEGER) AS end_year,
+    COALESCE(
+        CAST(NULLIF(substring(years_of_operation FROM '^(\d+)\s'), '') 
+            AS INTEGER),
+        CAST(substring(years_of_operation FROM '\d{4}\s*-\s*(\d{4})') 
+            AS INTEGER) - 
+        CAST(substring(years_of_operation FROM '(\d{4})\s*-\s*\d{4}') 
+            AS INTEGER)) AS years_operated
+FROM allsectors;
+```
 * **Null values**: Identified missing data in critical columns such as `amount_raised`, `budget_status`, and `failure_reason`.
 * **Funding Information**:
   * Extracted `parent_company` from parentheses or after space
   * Parsed `amount_raised` with proper unit conversion (M=million, B=billion)
   * Identified magnitude (M/B) for each amount
+```sql
+---splits the how_much_they_raised column from the allsectors table into three new derived columns:
+---parent_company: text inside parentheses or after a space.
+---amount_raised: sum of valid numeric values (excluding anything in parentheses).
+---magnitude: unit like M, B, etc., from each valid amount.
+
+SELECT name, sector, how_much_they_raised,
+    CASE WHEN how_much_they_raised ~ '\(.*\)' THEN 
+            regexp_replace(how_much_they_raised, '.*\(([^)]*)\).*', '\1')
+        WHEN how_much_they_raised LIKE '% %' THEN 
+            split_part(how_much_they_raised, ' ', 2)
+        ELSE NULL END AS parent_company,
+
+    CASE WHEN how_much_they_raised ~* '\$0(\s|$)' THEN NULL
+        ELSE regexp_replace(substring(how_much_they_raised FROM '\$[0-9.]+([MB])'),
+                '\$[0-9.]+', '') END AS magnitude,
+
+    CASE WHEN how_much_they_raised ~* '\$0(\s|$)' THEN 0
+        ELSE (SELECT SUM(CASE 
+                    WHEN match[2] = 'B' THEN match[1]::numeric * 1000000000
+                    WHEN match[2] = 'M' THEN match[1]::numeric * 1000000
+                    ELSE match[1]::numeric END)
+            FROM (SELECT regexp_matches(
+                    regexp_replace(how_much_they_raised, '\([^)]*\)', '', 'g'),
+                    '\$([0-9.]+)([MB]?)',
+                    'g') AS match
+            ) AS amounts)
+    END AS amount_raised
+FROM allsectors
+	WHERE how_much_they_raised IS NOT NULL
+		ORDER BY amount_raised DESC;
+```
 * **Failure Analysis**:
   * Extracted primary `reason_why_they_failed` from text after semicolon
   * Extracted `key_takeaway` from text after semicolon
+```sql
+---using "position(';' IN why_they_failed)" to finds where the semicolon is.
+---using "substring(... FROM position + 1)" to grabs everything after the semicolon.
+---using "ltrim(...)" to trims any leading space after the semicolon.
+---If no ; is found, it returns the original column value
+
+SELECT 
+    name, sector, why_they_failed,
+    CASE WHEN position(';' IN why_they_failed) > 0 THEN 
+            ltrim(substring(why_they_failed FROM position(';' IN why_they_failed) + 1))
+        ELSE why_they_failed END AS reason_why_they_failed
+FROM allsectors;
+
+---using "position(';' IN takeaway)" to finds where the semicolon is.
+---and others as above
+
+SELECT 
+    takeaway,
+    CASE WHEN position(';' IN takeaway) > 0 THEN 
+            ltrim(substring(takeaway FROM position(';' IN takeaway) + 1))
+        ELSE takeaway END AS key_takeaway
+FROM allsectors;
+```
 * **Data Enrichment**: Added new columns to the allsectors table:
   * `start_year`, `end_year`, `years_operated`
   * `parent_company`, `amount_raised`
@@ -69,16 +145,6 @@ Key preprocessing steps executed through SQL:
   * `how_much_they_raised`
   * `why_they_failed`
   * `takeaway`
-
-```sql
--- Extracting start_year and end_year
-SELECT 
-    CAST(SUBSTRING(years_of_operation FROM '(\\d{4})\\s*-') AS INTEGER) AS start_year,
-    CAST(SUBSTRING(years_of_operation FROM '-\\s*(\\d{4})') AS INTEGER) AS end_year,
-    COALESCE(end_year - start_year, years_operated) AS years_operated
-FROM allsectors;
-```
-
 ---
 
 ## 📊 Exploratory Data Analysis
