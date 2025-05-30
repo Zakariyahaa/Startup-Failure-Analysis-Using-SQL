@@ -17,7 +17,7 @@
 
 ## 🧾 Project Overview
 
-This analysis examines patterns and causes of startup failures across various sectors from 1992 to 2024. By analyzing 914 failed startups, we identify common failure factors, sector-specific vulnerabilities, and relationships between funding, operational duration, and failure causes. The insights can help entrepreneurs, investors, and policymakers understand startup failure dynamics and make more informed decisions.
+This analysis examines patterns and causes of startup failures across various sectors from 1992 to 2024. By analyzing 890 failed startups, we identify common failure factors, sector-specific vulnerabilities, and relationships between funding, operational duration, and failure causes. The insights can help entrepreneurs, investors, and policymakers understand startup failure dynamics and make more informed decisions.
 
 ![startup counts](https://github.com/user-attachments/assets/a3054591-7364-4655-988e-4abf2ffdfeb4)
 
