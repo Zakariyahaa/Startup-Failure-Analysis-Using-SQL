@@ -29,7 +29,7 @@ This analysis examines patterns and causes of startup failures across various se
 
 * **Primary Source**: Kaggle – CB Insights' "Startup Failure Post-Mortem" dataset.
 * **Coverage**: 1992 to May 2024.
-* **Sectors**: Combined data from seven sector-specific tables: finance, health, information, retail, manufacturing, othersectors, and food.
+* **Sectors**: Combined data from seven sector-specific tables: finance, health, information, retail, manufacturing, food, and othersectors.
 * **Features**: Startup name, sector, operational years, funding details, and failure causes.
 
 ---
@@ -158,7 +158,7 @@ Initial exploration covered:
 ![failure per year](https://github.com/user-attachments/assets/46c56c8d-215b-48b9-a989-896cddcecb2d)
 
 * **Sector Distribution**:
-  * Total of 914 failed startups analyzed
+  * Total of 890 failed startups analyzed
   * Information sector accounted for 42% of failures (highest among all sectors)
   * Retail, manufacturing, and health sectors followed in failure frequency
 * **Operational Duration**:
@@ -220,8 +220,9 @@ FROM allsectors;
 ```
 ### 🔢 Summary Statistics
 
-* **Total failed startups**: **914**
+* **Total failed startups**: **890**
 * **Timeframe**: 1992 to 2024
+* **Avg. Years of Operation**: **8yrs**  
 * **Top sectors by failure**:
   * **Information** sector: **42%** of failures
   * **Retail**, **Manufacturing**, **Food & Accommodation** follow.
@@ -345,5 +346,5 @@ Survivorship Bias:
 ## 📚 References
 
 * [CB Insights Startup Failure Post-Mortem](https://www.cbinsights.com/research/startup-failure-post-mortem/)
-* [Kaggle Dataset - Startup Failure Post-Mortem](https://www.kaggle.com/datasets/cbinsights/startup-failure-post-mortem)
+* [Kaggle Dataset - Startup Failure](https://www.kaggle.com/datasets/dagloxkankwanda/startup-failures/data)
 
