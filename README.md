@@ -323,7 +323,7 @@ For Accelerators/Incubators:
 
 Data Completeness:
   * Many records contain incomplete or null values
-  * Some critical fields may be missing for certain startups
+  * Some critical fields were missing for certain startups
 
 Funding Data:
   * Parent company funding amounts are included for some startups, creating outliers
